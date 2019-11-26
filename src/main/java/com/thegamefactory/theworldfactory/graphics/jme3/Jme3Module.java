@@ -13,6 +13,8 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Quad;
 import com.thegamefactory.theworldfactory.core.World;
+import com.thegamefactory.theworldfactory.core.ecs.EntityContainer;
+import com.thegamefactory.theworldfactory.core.geo.PositionComponent;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -47,16 +49,18 @@ public class Jme3Module extends AbstractModule {
 
     @Provides
     @Singleton
-    public Jme3EntityListener jme3EntityListener(
+    public Jme3ComponentLifecycleListener jme3EntityListener(
             final AssetManager assetManager,
+            final EntityContainer entityContainer,
             @Named("world") final Node worldNode,
             final World world) {
-        final Jme3EntityListener jme3EntityListener = Jme3EntityListener.builder()
+        final Jme3ComponentLifecycleListener jme3ComponentLifecycleListener = Jme3ComponentLifecycleListener.builder()
                 .assetManager(assetManager)
+                .entityContainer(entityContainer)
                 .parent(worldNode)
                 .build();
-        world.registerListener(jme3EntityListener);
-        return jme3EntityListener;
+        world.registerComponentLifecycleListener(jme3ComponentLifecycleListener, PositionComponent.class);
+        return jme3ComponentLifecycleListener;
     }
 
     @Provides
